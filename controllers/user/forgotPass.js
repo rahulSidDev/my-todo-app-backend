@@ -1,0 +1,45 @@
+const OTP = require("../../models/otp")
+const User = require('../../models/user')
+
+const forgotPassword = async (req, res) => {
+    try {
+        // get email of the user from the req body.
+        const {email} = req.body
+
+        // email format verification.
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({
+                message: "Invalid email format",
+            });
+        }
+
+        // verify that the user already exist.
+        const response = await User.find({email})
+
+        if (response.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'user does not exist.'
+            })
+        }
+
+        const otpCreateFunc = () => Math.floor(100000 + Math.random() * 900000);
+        const otp = otpCreateFunc();
+
+        const otpRes = await OTP.create({email: email, otp: otp});
+
+        return res.status(200).json({
+            success: true,
+            message: 'successfully sent otp'
+        })
+    }
+    catch (e) {
+        return res.status(500).json({
+            success: false,
+            message: `error: ${e.message}`
+        })
+    }
+}
+
+module.exports = forgotPassword
