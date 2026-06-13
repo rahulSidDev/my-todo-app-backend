@@ -12,7 +12,7 @@ app.use(cookieParser())
 const cors = require("cors");
 
 const corsOptions = {
-  origin: 'http://localhost:5173', // frontend URL
+  origin: 'https://my-todo-app-frontend-cyan.vercel.app/', // frontend URL
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
   optionsSuccessStatus: 200,
