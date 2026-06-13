@@ -3,65 +3,69 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const login = async (req, res) => {
-    try {
-        // fetch the data frokm request body
-        const {email, password} = req.body
-        
-        // validate the data
-        if (!email || !password) {
-            return res.status(404).json({
-                success: false,
-                message: "all fields are required.",
-            })
-        }
+  try {
+    const { email, password } = req.body;
 
-        // check whether the user exists
-        const user = await User.find({email: email});
-
-        if (user.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "user doesn't exists.",
-            })
-        }
-
-        // if the user exists then compare the passwords.
-        if (await bcrypt.compare(password, user[0].password)) {
-            // jwt token creation
-            const payload = {
-                email: user[0].email,
-                name: user[0].name,
-                id: user[0]._id,
-            }
-
-            const token = jwt.sign(payload, process.env.SECRET, {expiresIn: "2h"});
-
-            const options = {
-                expires: new Date(Date.now() + 2 * 60 * 60 * 1000),
-                httpOnly: true,
-            }
-
-            res.cookie("myCookie", token, options).status(200).json({
-                success: true,
-                token,
-                user,
-                message:"Logged in successfully",
-            })
-        }
-        else {
-            return res.status(404).json({
-                success: false,
-                message: "Wrong password, try again",
-            })
-        }
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
     }
-    catch (error) {
-        console.log(error.message);
-        return res.status(500).json({
-            success: false,
-            message: `error message: ${error.message}`,
-        })
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User doesn't exist",
+      });
     }
-}
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Wrong password",
+      });
+    }
+
+    const token = jwt.sign(
+      {
+        email: user.email,
+        name: user.name,
+        id: user._id,
+      },
+      process.env.SECRET,
+      { expiresIn: "2h" }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      expires: new Date(Date.now() + 2 * 60 * 60 * 1000),
+    });
+
+    return res.status(200).json({
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+      },
+      message: "Logged in successfully",
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 module.exports = login
