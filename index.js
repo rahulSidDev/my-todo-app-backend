@@ -40,8 +40,7 @@ const corsOptions = {
 };
 
 // Apply CORS
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions)); // preflight fix
+app.use(cors(corsOptions)); // preflight fix
 
 // =======================
 // DB CONNECTION
