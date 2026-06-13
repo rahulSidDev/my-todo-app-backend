@@ -23,6 +23,10 @@ app.use(cors(corsOptions));
 // use the dotenv package to load all .env vars into process.env obj.
 require("dotenv").config();
 
+// import db config and start the db connection.
+const {dbConnect} = require("./config/dbConnect");
+dbConnect();
+
 // fetch the port no. from .env file.
 const PORT = process.env.PORT || 5000;
 
@@ -39,7 +43,3 @@ app.listen(PORT, () => {
 app.get("/", (req, res) => {
     res.send("<h1>This is the homepage</h1>");
 })
-
-// import db config and start the db connection.
-const {dbConnect} = require("./config/dbConnect");
-dbConnect();
