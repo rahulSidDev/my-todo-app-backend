@@ -41,7 +41,7 @@ const login = async (req, res) => {
       { expiresIn: "2h" }
     );
 
-    res.cookie("token", token, {
+    res.cookie("myCookie", token, {
       httpOnly: true,
       secure: true,
       sameSite: "none",
@@ -58,13 +58,13 @@ const login = async (req, res) => {
       },
       message: "Logged in successfully",
     });
-
-  } catch (error) {
+  } 
+  catch (error) {
     console.log(error);
     return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    success: false,
+    message: error.message,
+  });
   }
 };
 
