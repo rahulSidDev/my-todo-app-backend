@@ -33,7 +33,11 @@ allRoutes.post("/user/forgot-password-reset", resetPassword)
 allRoutes.post("/user/forgot-password-otp", forgotPassOtp)
 allRoutes.post("/user/logout", auth, (req, res) => {
 
-  res.clearCookie("myCookie");
+  res.clearCookie("myCookie", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
 
   res.status(200).json({
     success: true,
