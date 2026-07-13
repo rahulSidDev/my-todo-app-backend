@@ -27,7 +27,6 @@ const profile = async(req, res) => {
         })
     }
     catch (e) {
-        console.log(e.message)
         return res.status(500).json({
             success: false,
             message: `error: ${e.message}`
