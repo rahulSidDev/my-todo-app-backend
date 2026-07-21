@@ -14,7 +14,8 @@ const updateTodo = async (req, res) => {
 
         const response = await Todo.findByIdAndUpdate(
             {_id: id},
-            {title: title, description: description, updatedAt: Date.now()}
+            {title: title, description: description, updatedAt: Date.now()},
+            {returnDocument: 'after'}
         );
 
         res.status(200).json({
