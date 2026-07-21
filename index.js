@@ -45,7 +45,7 @@ app.use(cors(corsOptions)); // preflight fix
 // =======================
 // DB CONNECTION
 // =======================
-const { dbConnect } = require("./config/dbConnect");
+const dbConnect = require("./config/dbConnect");
 dbConnect();
 
 // =======================
