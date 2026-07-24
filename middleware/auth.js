@@ -1,29 +1,20 @@
 const jwt = require('jsonwebtoken')
 
-exports.auth = async (req, res, next) => {
+module.exports = async (req, res, next) => {
     try {
         // extract token
         const token = req.cookies.myCookie
 
         // validation
         if (!token) {
-            return res.status(404).json({
+            return res.status(401).json({
                 success: false,
-                message: "token is missing.",
+                message: "user is not logged in.",
             })
         }
 
-        // verify token
-        try {
-            const decode = jwt.verify(token, process.env.SECRET)
-            req.user = decode
-        }
-        catch (error) {
-            return res.status(404).json({
-                success: false,
-                message: 'token invalid.'
-            })
-        }
+        const decode = jwt.verify(token, process.env.SECRET)
+        req.user = decode
 
         next()
     }

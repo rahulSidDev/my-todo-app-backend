@@ -1,6 +1,6 @@
-const Todo = require("../../models/todo");
+const Note = require("../../models/note");
 
-const getTodo = async (req, res) => {
+module.exports = async (req, res) => {
     try {
         const id = req.params.id;
         const userID = req.user.id
@@ -12,7 +12,14 @@ const getTodo = async (req, res) => {
             })
         }
 
-        const response = await Todo.findById({_id: id});
+        const response = await Note.findById({_id: id});
+
+        if (!response) {
+            return res.status(404).json({
+                success: false,
+                message: 'note does not exist.'
+            })
+        }
 
         if (userID !== response.user.toString()) {
             return res.status(404).json({
@@ -22,7 +29,7 @@ const getTodo = async (req, res) => {
         }
 
         res.status(200).json({
-            message: "successfully found todo.",
+            message: "successfully found note.",
             success: true,
             data: response,
         })
@@ -35,5 +42,3 @@ const getTodo = async (req, res) => {
         })
     }
 }
-
-module.exports = getTodo

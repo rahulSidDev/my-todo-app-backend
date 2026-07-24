@@ -11,18 +11,14 @@ const userSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
-    phone: {
-        type: String,
-        trim: true,
-    },
-    address: {
-        type: String,
-        trim: true,
-        maxLength: 50,
-    },
     password: {
         type: String,
         required: true,
+    },
+    colorPreference: {
+        type: String,
+        enum: ['pink', 'yellow', 'alternate'],
+        default: 'pink'
     }
 })
 

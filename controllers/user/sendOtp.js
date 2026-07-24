@@ -1,7 +1,7 @@
 const User = require("../../models/user");
 const OTP = require("../../models/otp")
 
-const otpCreation = async (req, res) => {
+module.exports = async (req, res) => {
     try {
         // get email of the user from the req body.
         const {email} = req.body
@@ -28,7 +28,11 @@ const otpCreation = async (req, res) => {
         const otpCreateFunc = () => Math.floor(100000 + Math.random() * 900000);
         const otp = otpCreateFunc();
 
-        const otpRes = await OTP.create({email: email, otp: otp});
+        const otpRes = await OTP.create({
+            email: email, 
+            otp: otp,
+            purpose: 'signup'
+        });
 
         return res.status(200).json({
             success: true,
@@ -44,5 +48,3 @@ const otpCreation = async (req, res) => {
         })
     }
 }
-
-module.exports = otpCreation

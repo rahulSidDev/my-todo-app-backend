@@ -1,21 +1,21 @@
-const Todo = require("../../models/todo");
+const Note = require("../../models/note");
 
-const getAllTodos = async (req, res) => {
+module.exports = async (req, res) => {
     try {
-        const userID = req.user.id
-        const response = await Todo.find({user: userID});
+        const id = req.params.id;
 
-        if (!response) {
+        if (!id) {
             res.status(404).json({
-                message: "no todos present.",
+                message: "id is required.",
                 success: false,
             })
         }
 
+        await Note.findByIdAndDelete({_id: id});
+
         res.status(200).json({
-            message: "successfully fetched all todos",
+            message: "successfully deleted Note",
             success: true,
-            data: response,
         })
     }
     catch (error) {
@@ -26,5 +26,3 @@ const getAllTodos = async (req, res) => {
         })
     }
 }
-
-module.exports = getAllTodos
