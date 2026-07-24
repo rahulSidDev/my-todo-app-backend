@@ -2,9 +2,9 @@ const User = require("../../models/user");
 const OTP = require("../../models/otp")
 const bcrypt = require("bcrypt");
 
-const signup = async (req, res) => {
+module.exports = async (req, res) => {
     try {
-        const {name, email, phone, address, password, confirmPass, otp} = req.body;
+        const {name, email, password, confirmPass, otp} = req.body;
 
         if (!name || !email || !password || !confirmPass || !otp) {
             return res.status(404).json({
@@ -22,7 +22,12 @@ const signup = async (req, res) => {
         }
 
         //fetch the most recent otp for the corresponding email from DB and then verify it.
-        const recentOtp = await OTP.find({email}).sort({createdAt: -1}).limit(1)
+        const recentOtp = await OTP.find({
+            email, 
+            purpose: 'signup'
+        })
+        .sort({createdAt: -1})
+        .limit(1)
 
         if(recentOtp.length == 0) {
             return res.status(404).json({
@@ -61,5 +66,3 @@ const signup = async (req, res) => {
         })
     }
 }
-
-module.exports = signup

@@ -1,6 +1,6 @@
 const User = require("../../models/user");
 
-const profile = async(req, res) => {
+module.exports = async(req, res) => {
     try {
         const userID = req.user.id
         
@@ -33,5 +33,3 @@ const profile = async(req, res) => {
         })
     }
 }
-
-module.exports = profile

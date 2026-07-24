@@ -51,8 +51,11 @@ dbConnect();
 // =======================
 // ROUTES
 // =======================
-const allRoutes = require("./routes/routes");
-app.use("/api/v1", allRoutes);
+const noteRoutes = require("./routes/note");
+app.use("/note", noteRoutes);
+
+const userRoutes = require('./routes/user')
+app.use('/user', userRoutes)
 
 // =======================
 // HEALTH CHECK ROUTE
