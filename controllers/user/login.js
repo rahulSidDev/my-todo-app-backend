@@ -13,7 +13,9 @@ module.exports = async (req, res) => {
 			});
 		}
 
-		const user = await User.findOne({ email });
+		const user = await User.findOne({
+			email
+		})
 
 		if (!user) {
 			return res.status(404).json({
@@ -52,9 +54,9 @@ module.exports = async (req, res) => {
 			success: true,
 			token,
 			user: {
-				id: user._id,
 				email: user.email,
 				name: user.name,
+				colorPreference: user.colorPreference
 			},
 			message: "Logged in successfully",
 		});

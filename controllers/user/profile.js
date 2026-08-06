@@ -11,7 +11,10 @@ module.exports = async(req, res) => {
             })
         }
 
-        const user = await User.find({_id: userID})
+        const user = await User.findById(
+            userID
+        )
+        .select('name email colorPreference -_id')
 
         if (user.length === 0) {
             return res.status(404).json({

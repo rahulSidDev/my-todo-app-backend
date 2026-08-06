@@ -27,7 +27,11 @@ module.exports = async (req, res) => {
         const otpCreateFunc = () => Math.floor(100000 + Math.random() * 900000);
         const otp = otpCreateFunc();
 
-        const otpRes = await OTP.create({email: email, otp: otp});
+        const otpRes = await OTP.create({
+            email: email, 
+            otp: otp,
+            pupose: 'forgot-password'
+        });
 
         return res.status(200).json({
             success: true,

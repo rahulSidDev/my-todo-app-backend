@@ -29,12 +29,14 @@ module.exports = async (req, res) => {
                 message: 'password is incorrect.'
             })
         }
+        
+        await Note.deleteMany({user: fetchedUser._id})
+        await User.findByIdAndDelete(fetchedUser._id)
 
-        Note.deleteMany({user: fetchedUser._id})
-        User.findByIdAndDelete(fetchedUser._id)
+        res.clearCookie('myCookie')
 
         return res.status(200).json({
-            success: false,
+            success: true,
             message: 'successfully deleted user and all corresponding notes.'
         })
     }

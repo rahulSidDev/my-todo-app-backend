@@ -5,7 +5,7 @@ module.exports = async (req, res) => {
     try {
         // get the password and confirm password from req body
         const {password, newPass, confirmNewPass} = req.body
-        const user = req.user.id
+        const userID = req.user.id
 
         if (!password || !newPass || !confirmNewPass) {
             return res.status(400).json({
@@ -14,10 +14,10 @@ module.exports = async (req, res) => {
             })
         }
 
-        if (password !== confirmNewPass) {
+        if (newPass !== confirmNewPass) {
             return res.status(400).json({
                 success: false,
-                message: 'password and confirm password do not match'
+                message: 'new password and confirm password do not match'
             })
         }
 
@@ -40,15 +40,15 @@ module.exports = async (req, res) => {
         }
 
         // hash the password and update it into the db
-        const hashedPass = await bcrypt.hash(password, 10);
+        const hashedNewPass = await bcrypt.hash(newPass, 10);
 
-        fetchedUser.password = hashedPass
+        fetchedUser.password = hashedNewPass
         await fetchedUser.save()
 
         res.clearCookie('myCookie')
 
         return res.status(200).json({
-            message: 'successfully saved new password',
+            message: 'successfully changed password. you will now be logged out.',
             success: true
         })
     }

@@ -9,6 +9,7 @@ const changePass = require('../controllers/user/changePass')
 const forgotPass = require('../controllers/user/forgotPass')
 const forgotPassSendOtp = require('../controllers/user/forgotPassSendOtp')
 const remove = require('../controllers/user/delete')
+const update = require('../controllers/user/update')
 
 const auth = require('../middleware/auth')
 
@@ -27,6 +28,8 @@ router.post('/logout', auth, async (req, res) => {
 })
 
 router.get('/', auth, profile)
+
+router.put('/', auth, update)
 
 router.delete('/', auth, remove)
 

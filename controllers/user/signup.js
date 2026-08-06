@@ -47,8 +47,6 @@ module.exports = async (req, res) => {
         const userData = await User.create({
             name: name,
             email: email,
-            phone: phone,
-            address: address,
             password: hashedPass,
         })
 
