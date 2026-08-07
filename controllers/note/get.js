@@ -3,7 +3,13 @@ const Note = require("../../models/note");
 module.exports = async (req, res) => {
     try {
         const userID = req.user.id
-        const response = await Note.find({user: userID});
+        const response = await Note.find(
+        {
+            user: userID,
+            isTrashed: false
+        },
+        '-user'
+    );
 
         if (response.length === 0) {
             return res.status(404).json({
