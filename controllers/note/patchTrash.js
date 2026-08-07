@@ -12,29 +12,17 @@ module.exports = async (req, res) => {
             })
         }
 
-        const response = await Note.findOne(
-            {_id: id},
-            '-user'
+        await Note.findByIdAndUpdate(
+            {
+                _id: id, 
+                user: userID
+            },
+            {isTrashed: true}
         );
 
-        if (!response) {
-            return res.status(404).json({
-                success: false,
-                message: 'note does not exist.'
-            })
-        }
-
-        if (userID !== response.user.toString()) {
-            return res.status(404).json({
-                message: 'user does not match',
-                success: false
-            })
-        }
-
         res.status(200).json({
-            message: "successfully found note.",
+            message: "successfully moved note to the trash bin",
             success: true,
-            data: response,
         })
     }
     catch (error) {
