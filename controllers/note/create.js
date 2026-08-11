@@ -17,9 +17,9 @@ module.exports = async (req, res) => {
         })
         .sort({ order: -1 })
 
-        let lastOrderNo = 0
+        let lastOrderNo = 1
         if (lastCreatedNote) {
-            const lastOrderNo = lastCreatedNote.order + 1
+            lastOrderNo = lastCreatedNote.order + 1
         }
 
         const response = await Note.create({

@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
         }
 
         const response = await Note.findOne(
-            {_id: id},
+            {_id: id, user: userID},
             '-user'
         );
 
@@ -21,13 +21,6 @@ module.exports = async (req, res) => {
             return res.status(404).json({
                 success: false,
                 message: 'note does not exist.'
-            })
-        }
-
-        if (userID !== response.user.toString()) {
-            return res.status(404).json({
-                message: 'user does not match',
-                success: false
             })
         }
 
