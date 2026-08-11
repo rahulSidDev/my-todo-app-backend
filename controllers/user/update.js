@@ -9,7 +9,10 @@ module.exports = async (req, res) => {
         }
         if (req.body.email) {
             updateFields.email = req.body.email
-            const fetchedUser = await User.findOne({email: updateFields.email})
+            const fetchedUser = await User.findOne({
+                email: updateFields.email,
+                _id: {$ne: req.user.id}
+            })
             if (fetchedUser) {
                 return res.status(400).json({
                     success: false,

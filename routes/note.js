@@ -10,9 +10,9 @@ const restore = require('../controllers/note/patchRestore')
 const update = require('../controllers/note/update')
 const get = require('../controllers/note/get')
 const getOne = require('../controllers/note/getOne')
+const checkbox = require('../controllers/note/patchCheckbox')
 
 const auth = require('../middleware/auth')
-const patchTrash = require('../controllers/note/patchTrash')
 
 router.post('/', auth, create)
 
@@ -23,6 +23,7 @@ router.put('/:id', auth, update)
 
 router.patch('/trash/:id', auth, trash)
 router.patch('/restore/:id', auth, restore)
+router.patch('/checkbox/:id', auth, checkbox)
 
 router.get('/', auth, get)
 router.get('/trashed', auth, trashed)

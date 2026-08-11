@@ -30,7 +30,7 @@ module.exports = async (req, res) => {
         const otpRes = await OTP.create({
             email: email, 
             otp: otp,
-            pupose: 'forgot-password'
+            purpose: 'forgot-password'
         });
 
         return res.status(200).json({

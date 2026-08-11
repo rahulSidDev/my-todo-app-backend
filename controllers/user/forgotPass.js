@@ -50,7 +50,7 @@ module.exports = async (req, res) => {
 
         const newPassHash = await bcrypt.hash(newPass, 10)
         
-        fetchedUser.password = newPass
+        fetchedUser.password = newPassHash
         fetchedUser.save()
 
         return res.status(200).json({
