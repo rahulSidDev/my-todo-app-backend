@@ -11,6 +11,7 @@ const update = require('../controllers/note/update')
 const get = require('../controllers/note/get')
 const getOne = require('../controllers/note/getOne')
 const checkbox = require('../controllers/note/patchCheckbox')
+const reorder = require('../controllers/note/patchReorder')
 
 const auth = require('../middleware/auth')
 
@@ -24,6 +25,7 @@ router.put('/:id', auth, update)
 router.patch('/trash/:id', auth, trash)
 router.patch('/restore/:id', auth, restore)
 router.patch('/checkbox/:id', auth, checkbox)
+router.patch('/reorder', auth, reorder)
 
 router.get('/', auth, get)
 router.get('/trashed', auth, trashed)
