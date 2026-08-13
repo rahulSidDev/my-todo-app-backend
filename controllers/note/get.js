@@ -2,14 +2,24 @@ const Note = require("../../models/note");
 
 module.exports = async (req, res) => {
     try {
-        const userID = req.user.id
-        const response = await Note.find(
-        {
-            user: userID,
+        const {search} = req.query
+        let query = {
+            user: req.user.id,
             isTrashed: false
-        },
-        '-user'
-    );
+        }
+
+        if (search) {
+            query.$or = [
+                {
+                    title: { $regex: search, $options: 'i' }
+                },
+                {
+                    "content.content": { $regex: search, $options: 'i' }
+                }
+            ]
+        }
+
+        const response = await Note.find(query, '-user').sort({order: 1});
 
         if (response.length === 0) {
             return res.status(404).json({
