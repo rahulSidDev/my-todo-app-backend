@@ -1,26 +1,34 @@
 const User = require("../../models/user");
 const OTP = require("../../models/otp")
+const mailSender = require('../../utils/mailSender')
+const emailTemplates = require('../../utils/emailTemplates')
 
 module.exports = async (req, res) => {
     try {
         // get email of the user from the req body.
         const {email} = req.body
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email is required.'
+            })
+        }
 
         // email format verification.
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             return res.status(400).json({
-                message: "Invalid email format",
+                message: "Invalid email format.",
+                success: false
             });
         }
 
         // verify that the user doesn't already exist.
-        const response = await User.find({email})
-
-        if (response.length !== 0) {
-            return res.status(404).json({
+        const response = await User.findOne({email})
+        if (response) {
+            return res.status(400).json({
                 success: false,
-                message: 'user already exists.'
+                message: 'User already exists.'
             })
         }
 
@@ -34,17 +42,22 @@ module.exports = async (req, res) => {
             purpose: 'signup'
         });
 
+        const template = emailTemplates.signupOtp(otp);
+        await mailSender(
+            email,
+            template.subject,
+            template.text
+        );
+
         return res.status(200).json({
             success: true,
-            message: 'otp sent successfully.',
-            data: otpRes
+            message: 'Otp sent successfully.',
         })
     }
     catch (e) {
-        console.log(e.message)
         return res.status(500).json({
             success: false,
-            message: `error: ${e.message}`
+            message: `500 error: ${e.message}`
         })
     }
 }

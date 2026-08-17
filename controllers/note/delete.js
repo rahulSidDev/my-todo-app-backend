@@ -2,16 +2,13 @@ const Note = require("../../models/note")
 
 module.exports = async (req, res) => {
     try {
-        const userID = req.user.id
+        const user = req.user
 
-        await Note.deleteMany({
-            user: userID, 
-            isTrashed: true
-        })
+        await Note.deleteMany({user: user._id, isTrashed: true})
 
         return res.status(200).json({
             success: true,
-            message: 'successfully deleted all notes permanently.'
+            message: 'Successfully deleted all notes permanently.'
         })        
     }
     catch (e) {

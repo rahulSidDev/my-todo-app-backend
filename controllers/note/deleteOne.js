@@ -3,17 +3,12 @@ const Note = require("../../models/note")
 module.exports = async (req, res) => {
     try {
         const id = req.params.id
-        const userID = req.user.id
+        const user = req.user
         
-        await Note.deleteOne({
-            _id: id,
-            user: userID,
-            isTrashed: true
-        })
-
+        await Note.deleteOne({_id: id, user: user._id, isTrashed: true})
         return res.status(200).json({
             message: true,
-            message: 'successfully deleted note permanently.'
+            message: 'Successfully deleted note permanently.'
         })
     }
     catch (e) {

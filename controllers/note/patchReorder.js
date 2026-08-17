@@ -6,17 +6,17 @@ module.exports = async (req, res) => {
         if (!reorderedNotes) {
             return res.status(400).json({
                 success: false,
-                message: 'list of newly ordered notes is required.'
+                message: 'List of newly ordered notes is required.'
             })
         }
 
-        const userID = req.user.id
+        const user = req.user
 
         const operations = reorderedNotes.map(note => ({
             updateOne: {
                 filter: {
                     _id: note.id,
-                    user: userID,
+                    user: user._id,
                     isTrashed: false
                 },
                 update: {

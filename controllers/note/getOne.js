@@ -3,37 +3,25 @@ const Note = require("../../models/note");
 module.exports = async (req, res) => {
     try {
         const id = req.params.id;
-        const userID = req.user.id
+        const user = req.user
 
-        if (!id) {
-            res.status(404).json({
-                message: "id is required.",
-                success: false,
-            })
-        }
-
-        const response = await Note.findOne(
-            {_id: id, user: userID},
-            '-user'
-        );
-
+        const response = await Note.findOne({_id: id, user: user._id}, '-user');
         if (!response) {
             return res.status(404).json({
                 success: false,
-                message: 'note does not exist.'
+                message: 'Note does not exist.'
             })
         }
 
         res.status(200).json({
-            message: "successfully found note.",
+            message: "Successfully fetched note.",
             success: true,
             data: response,
         })
     }
     catch (error) {
-        console.log("error: ", error.message);
         res.status(500).json({
-            message: `error is: ${error.message}`,
+            message: `500 error: ${error.message}`,
             success: false,
         })
     }

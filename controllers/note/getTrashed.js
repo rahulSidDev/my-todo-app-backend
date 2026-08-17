@@ -2,23 +2,19 @@ const Note = require('../../models/note')
 
 module.exports = async (req, res) => {
     try {
-        const userID = req.user.id
+        const user = req.user
 
-        const fetchedNotes = await Note.find({
-            user: userID,
-            isTrashed: true
-        })
-
+        const fetchedNotes = await Note.find({user: user._id, isTrashed: true})
         if (fetchedNotes.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'no notes exist.'
+            return res.status(200).json({
+                success: true,
+                message: 'No trashed notes exist.'
             })
         }
 
         return res.status(200).json({
             success: true,
-            message: 'successfully fetched trashed notes.',
+            message: 'Successfully fetched trashed notes.',
             data: fetchedNotes
         })
     }

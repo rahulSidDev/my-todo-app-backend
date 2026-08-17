@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const User = require('../models/user')
 
 module.exports = async (req, res, next) => {
     try {
@@ -9,12 +10,29 @@ module.exports = async (req, res, next) => {
         if (!token) {
             return res.status(401).json({
                 success: false,
-                message: "user is not logged in.",
+                message: "User is not logged in.",
             })
         }
 
         const decode = jwt.verify(token, process.env.SECRET)
-        req.user = decode
+        const userID = decode.id
+        if (!userID) {
+            return res.status(400).json({
+                success: false,
+                message: 'User ID does not exist in the cookie.'
+            })
+        }
+
+        //check whether the user exists in db or not.
+        const fetchedUser = await User.findOne({_id: userID})
+        if (!fetchedUser) {
+            return res.status(404).json({
+                success: false,
+                message: 'No user found for the corresponding token.'
+            })
+        }
+
+        req.user = fetchedUser
 
         next()
     }
@@ -22,7 +40,7 @@ module.exports = async (req, res, next) => {
         console.log(error.message)
         return res.status(500).json({
             success: false,
-            message: `the error is: ${error.message}`
+            message: `500 error: ${error.message}`
         })
     }
 }

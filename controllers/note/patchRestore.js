@@ -3,12 +3,12 @@ const Note = require("../../models/note")
 module.exports = async (req, res) => {
     try {
         const id = req.params.id
-        const userID = req.user.id
+        const user = req.user
 
         const updatedNote = await Note.findOneAndUpdate(
             {
                 _id: id,
-                user: userID
+                user: user._id
             },
             {
                 isTrashed: false
@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: 'successfully restored',
+            message: 'Successfully restored note.',
             data: updatedNote
         })
     }

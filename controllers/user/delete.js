@@ -5,45 +5,37 @@ const bcrypt = require('bcrypt')
 module.exports = async (req, res) => {
     try {
         const {password} = req.body
-        const userID = req.user.id
-
         if (!password) {
             return res.status(400).json({
                 success: false,
-                message: 'all fields are required.'
-            })
-        }
-
-        const fetchedUser = await User.findById(userID)
-        if (!fetchedUser) {
-            return res.status(404).json({
-                success: false,
-                message: 'user does not exist.'
-            })
-        }
-
-        const isPasswordMatch = await bcrypt.compare(password, fetchedUser.password)
-        if (!isPasswordMatch) {
-            return res.status(401).json({
-                success: false,
-                message: 'password is incorrect.'
+                message: 'Password for the user is required.'
             })
         }
         
-        await Note.deleteMany({user: fetchedUser._id})
-        await User.findByIdAndDelete(fetchedUser._id)
+        const user = req.user
+
+        const isPasswordMatch = await bcrypt.compare(password, user.password)
+        if (!isPasswordMatch) {
+            return res.status(401).json({
+                success: false,
+                message: 'Password is incorrect.'
+            })
+        }
+        
+        await Note.deleteMany({user: user._id})
+        await User.findByIdAndDelete(user._id)
 
         res.clearCookie('myCookie')
 
         return res.status(200).json({
             success: true,
-            message: 'successfully deleted user and all corresponding notes.'
+            message: 'Successfully deleted user and all corresponding notes.'
         })
     }
     catch (e) {
         return res.status(500).json({
             success: false,
-            message: `error: ${e.message}`
+            message: `500 error: ${e.message}`
         })
     }
 }
