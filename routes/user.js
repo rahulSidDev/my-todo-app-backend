@@ -3,22 +3,24 @@ const router = express.Router()
 
 const login = require('../controllers/user/login')
 const signup = require('../controllers/user/signup')
-const sendOtp = require('../controllers/user/sendOtp')
-const profile = require('../controllers/user/profile')
+const signupVerify = require('../controllers/user/signupVerify')
 const changePass = require('../controllers/user/changePass')
 const forgotPass = require('../controllers/user/forgotPass')
-const forgotPassSendOtp = require('../controllers/user/forgotPassSendOtp')
+const forgotPassVerify = require('../controllers/user/forgotPassVerify')
 const remove = require('../controllers/user/delete')
-const update = require('../controllers/user/update')
+const updatePreferences = require('../controllers/user/updatePreferences')
+const updateEmailVerify = require('../controllers/user/updateEmailVerify')
+const updateEmail = require('../controllers/user/updateEmail')
 
 const auth = require('../middleware/auth')
 
 router.post('/login', login)
 router.post('/signup', signup)
-router.post('/send-otp', sendOtp)
+router.post('/signup/verify', signupVerify)
 router.post('/change-password', auth, changePass)
 router.post('/forgot-password', forgotPass)
-router.post('/forgot-password/send-otp', forgotPassSendOtp)
+router.post('/forgot-password/verify', forgotPassVerify)
+router.post('/email/verify', auth, updateEmailVerify)
 router.post('/logout', auth, async (req, res) => {
     res.clearCookie('myCookie')
     return res.status(200).json({
@@ -27,9 +29,21 @@ router.post('/logout', auth, async (req, res) => {
     })
 })
 
-router.get('/', auth, profile)
+router.get('/', auth, (req, res) => {
+    const {name, email, colorPreference} = req.user
+    return res.status(200).json({
+        success: true,
+        message: 'Successfully retreived user profile data.',
+        data: {
+            name,
+            email,
+            colorPreference,
+        }
+    })
+})
 
-router.put('/', auth, update)
+router.patch('/preferences', auth, updatePreferences)
+router.patch('/email', auth, updateEmail)
 
 router.delete('/', auth, remove)
 

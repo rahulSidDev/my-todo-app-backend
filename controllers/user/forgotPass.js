@@ -8,7 +8,14 @@ module.exports = async (req, res) => {
         if (!email || !newPass || !confirmNewPass || !otp) {
             return res.status(400).json({
                 success: false,
-                message: 'all fields are required.'
+                message: 'All fields are required.'
+            })
+        }
+
+        if (newPass !== confirmNewPass) {
+            return res.status(400).json({
+                success: false,
+                message: 'New password and confirm new password do not match.'
             })
         }
 
@@ -22,36 +29,22 @@ module.exports = async (req, res) => {
         if (fetchedOtp.length === 0) {
             return res.status(404).json({
                 success: false,
-                message: 'otp not found.'
+                message: 'Otp no longer exists.'
             })
         }
 
         if (fetchedOtp[0].otp !== otp) {
             return res.status(400).json({
                 success: false,
-                message: 'otp does not match.'
-            })
-        }
-
-        if (newPass !== confirmNewPass) {
-            return res.status(400).json({
-                success: false,
-                message: 'password and confirm password do not match.'
+                message: 'Otp does not match.'
             })
         }
 
         const fetchedUser = await User.findOne({email})
-        if (!fetchedUser) {
-            return res.status(404).json({
-                success: false,
-                message: 'user is not found.'
-            })
-        }
-
         const newPassHash = await bcrypt.hash(newPass, 10)
         
         fetchedUser.password = newPassHash
-        fetchedUser.save()
+        await fetchedUser.save()
 
         return res.status(200).json({
             message: 'successfully changed password.',
@@ -61,7 +54,7 @@ module.exports = async (req, res) => {
     catch (e) {
         return res.status(500).json({
             success: false,
-            message: `error: ${e.message}`
+            message: `500 error: ${e.message}`
         })
     }
 }

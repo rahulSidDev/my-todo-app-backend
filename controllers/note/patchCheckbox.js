@@ -6,23 +6,23 @@ module.exports = async (req, res) => {
         if (!contentID) {
             return res.status(400).json({
                 success: false,
-                message: 'content id is required.'
+                message: 'Content id is required.'
             })
         }
 
         const id = req.params.id
-        const userID = req.user.id
+        const user = req.user
 
         const fetchedNote = await Note.findOne({
             _id: id, 
-            user: userID
+            user: user._id
         }, '-user')
         .populate('content')
 
         if (!fetchedNote) {
             return res.status(404).json({
                 success: false,
-                message: 'note does not exist.'
+                message: 'Note does not exist.'
             })
         }
 
@@ -37,7 +37,7 @@ module.exports = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: 'successfully updated note content.',
+            message: 'Successfully updated note content.',
             data: fetchedNote
         })
     }

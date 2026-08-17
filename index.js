@@ -49,6 +49,18 @@ const dbConnect = require("./config/dbConnect");
 dbConnect();
 
 // =======================
+// MAIL SENDER CONNECTION
+// =======================
+const transporter = require('./utils/mailTransporter')
+transporter.verify()
+    .then(() => {
+        console.log("SMTP server is ready");
+    })
+    .catch((error) => {
+        console.error("SMTP connection failed:", error);
+    });
+
+// =======================
 // ROUTES
 // =======================
 const noteRoutes = require("./routes/note");

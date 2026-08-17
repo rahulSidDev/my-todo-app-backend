@@ -5,67 +5,68 @@ const jwt = require("jsonwebtoken");
 module.exports = async (req, res) => {
 	try {
 		const { email, password } = req.body;
-
 		if (!email || !password) {
 			return res.status(400).json({
 				success: false,
-				message: "All fields are required",
+				message: "All fields are required.",
 			});
 		}
 
-		const user = await User.findOne({
-			email
-		})
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({
+                message: "Invalid email format.",
+            });
+        }
 
-		if (!user) {
+		const fetchedUser = await User.findOne({email})
+		if (!fetchedUser) {
 			return res.status(404).json({
 				success: false,
-				message: "User doesn't exist",
+				message: "User doesn't exist.",
 			});
 		}
 
-		const isMatch = await bcrypt.compare(password, user.password);
-
+		const isMatch = await bcrypt.compare(password, fetchedUser.password);
 		if (!isMatch) {
 			return res.status(401).json({
 				success: false,
-				message: "Wrong password",
+				message: "Wrong password.",
 			});
 		}
 
 		const token = jwt.sign(
 			{
-				email: user.email,
-				name: user.name,
-				id: user._id,
+				email: fetchedUser.email,
+				name: fetchedUser.name,
+				id: fetchedUser._id,
 			},
 			process.env.SECRET,
-			{ expiresIn: "2h" }
+			{ expiresIn: "24h" }
 		);
 
 		res.cookie("myCookie", token, {
 			httpOnly: true,
 			secure: true,
 			sameSite: "none",
-			expires: new Date(Date.now() + 2 * 60 * 60 * 1000),
+			expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
 		});
 
 		return res.status(200).json({
 			success: true,
 			token,
 			user: {
-				email: user.email,
-				name: user.name,
-				colorPreference: user.colorPreference
+				email: fetchedUser.email,
+				name: fetchedUser.name,
+				colorPreference: fetchedUser.colorPreference
 			},
-			message: "Logged in successfully",
+			message: "Logged in successfully.",
 		});
 	}
 	catch (error) {
-		console.log(error);
 		return res.status(500).json({
 			success: false,
-			message: error.message,
+			message: `500 error: ${error.message}`,
 		});
 	}
 };

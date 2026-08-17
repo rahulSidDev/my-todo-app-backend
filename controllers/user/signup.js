@@ -5,19 +5,18 @@ const bcrypt = require("bcrypt");
 module.exports = async (req, res) => {
     try {
         const {name, email, password, confirmPass, otp} = req.body;
-
         if (!name || !email || !password || !confirmPass || !otp) {
-            return res.status(404).json({
+            return res.status(400).json({
                 success: false,
-                message: "all fields are required",
+                message: "All fields are required.",
             })
         }
 
         //password and confirm password checking
         if(password !== confirmPass) {
-            return res.status(404).json({
+            return res.status(400).json({
                 success: false,
-                message: "password and confirm password dont match",
+                message: "Password and confirm password dont match.",
             })
         }
 
@@ -29,15 +28,15 @@ module.exports = async (req, res) => {
         .sort({createdAt: -1})
         .limit(1)
 
-        if(recentOtp.length == 0) {
+        if(recentOtp.length === 0) {
             return res.status(404).json({
                 success: false,
-                message: "OTP not found",
+                message: "OTP no longer exists.",
             })
         } else if(otp !== recentOtp[0].otp){
-            return res.status(404).json({
+            return res.status(400).json({
                 success: false,
-                message: "OTp does not match",
+                message: "OTP does not match.",
             })
         }
 
@@ -51,16 +50,14 @@ module.exports = async (req, res) => {
         })
 
         return res.status(200).json({
-            message: "successfully added new user.",
-            success: true,
-            data: userData,
+            message: "Successfully signed up new user.",
+            success: true
         })
     }
     catch (error) {
-        console.log(error.message);
         return res.status(500).json({
             success: false,
-            message: `error message: ${error.message}`
+            message: `500 error: ${error.message}`
         })
     }
 }
