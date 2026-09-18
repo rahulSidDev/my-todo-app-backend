@@ -1,6 +1,3 @@
-const dns = require("dns");
-dns.setDefaultResultOrder("ipv4first");
-
 // Load environment variables first
 require("dotenv").config();
 
@@ -50,18 +47,6 @@ app.use(cors(corsOptions)); // preflight fix
 // =======================
 const dbConnect = require("./config/dbConnect");
 dbConnect();
-
-// =======================
-// MAIL SENDER CONNECTION
-// =======================
-const transporter = require('./utils/mailTransporter')
-transporter.verify()
-    .then(() => {
-        console.log("SMTP server is ready");
-    })
-    .catch((error) => {
-        console.error("SMTP connection failed:", error);
-    });
 
 // =======================
 // ROUTES

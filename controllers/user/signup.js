@@ -12,14 +12,6 @@ module.exports = async (req, res) => {
             })
         }
 
-        //password and confirm password checking
-        if(password !== confirmPass) {
-            return res.status(400).json({
-                success: false,
-                message: "Password and confirm password dont match.",
-            })
-        }
-
         //fetch the most recent otp for the corresponding email from DB and then verify it.
         const recentOtp = await OTP.find({
             email, 

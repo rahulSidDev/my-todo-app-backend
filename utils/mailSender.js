@@ -1,21 +1,27 @@
-const nodemailer = require('nodemailer')
-const transporter = require('./mailTransporter')
+const { Resend } = require("resend");
 
-const mailSender = async (email, title, body) => {
-    try {
-        console.time("send-email");
-        return await transporter.sendMail({
-            from: `MyNotes App. <${process.env.MAIL_USER}.>`,
-            to: email,
-            subject: title,
-            text: body,
-        })
-        console.timeEnd("send-email");
-        console.log("Message ID:", result.messageId);
-    }
-    catch (e) {
-        console.log(`mail sending error: ${e.message}`)
-    }
-}
+const resend = new Resend(
+    process.env.RESEND_API_KEY
+);
 
-module.exports = mailSender
+const mailSender = async (
+    email,
+    subject,
+    body
+) => {
+
+    const { data, error } = await resend.emails.send({
+        from: process.env.MAIL_USER,
+        to: [email],
+        subject,
+        text: body
+    });
+
+    if (error) {
+        throw new Error(error.message);
+    }
+
+    return data;
+};
+
+module.exports = mailSender;
