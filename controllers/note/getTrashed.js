@@ -8,7 +8,8 @@ module.exports = async (req, res) => {
         if (fetchedNotes.length === 0) {
             return res.status(200).json({
                 success: true,
-                message: 'No trashed notes exist.'
+                message: 'No trashed notes exist.',
+                data: fetchedNotes
             })
         }
 

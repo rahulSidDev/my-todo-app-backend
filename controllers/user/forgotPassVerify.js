@@ -6,11 +6,11 @@ const emailTemplates = require('../../utils/emailTemplates')
 module.exports = async (req, res) => {
     try {
         // get email of the user from the req body.
-        const {email} = req.body
-        if (!email) {
+        const {email, newPass, confirmNewPass} = req.body
+        if (!email || !newPass || !confirmNewPass) {
             return res.status(400).json({
                 success: false,
-                message: 'Email is required.'
+                message: 'All fields are required.'
             })
         }
 
@@ -20,6 +20,13 @@ module.exports = async (req, res) => {
             return res.status(400).json({
                 message: "Invalid email format.",
             });
+        }
+
+        if (newPass !== confirmNewPass) {
+            return res.status(400).json({
+                success: false,
+                message: 'New password and confirm new password do not match.'
+            })
         }
 
         // verify that the user already exist.
@@ -49,7 +56,8 @@ module.exports = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: 'successfully sent otp'
+            message: 'successfully sent otp',
+            expiresAt: new Date(otpRes.createdAt.getTime() + 5 * 60 * 1000)
         })
     }
     catch (e) {

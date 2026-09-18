@@ -12,13 +12,6 @@ module.exports = async (req, res) => {
             })
         }
 
-        if (newPass !== confirmNewPass) {
-            return res.status(400).json({
-                success: false,
-                message: 'New password and confirm new password do not match.'
-            })
-        }
-
         const fetchedOtp = await OTP.find({
             email,
             purpose: 'forgot-password'
