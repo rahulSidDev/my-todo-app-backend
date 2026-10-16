@@ -46,7 +46,8 @@ module.exports = async (req, res) => {
         const result = await OTP.create({
             otp: otp,
             email: newEmail,
-            purpose: 'update-email'
+            purpose: 'update-email',
+            data: {newEmail}
         })
 
         const template = emailTemplates.emailChangeOtp(otp);
@@ -64,7 +65,7 @@ module.exports = async (req, res) => {
     catch (e) {
         return res.status(500).json({
             success: false,
-            message: `500 error: ${e.message}`
+            message: `${e.message}`
         })
     }
 }

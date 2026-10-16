@@ -12,6 +12,14 @@ module.exports = async (req, res) => {
             })
         }
 
+        const errors = passwordValidator(password)
+        if (errors.length !== 0) {
+            return res.status(400).json({
+                success: false,
+                message: errors
+            })
+        }
+
         if (newPass !== confirmNewPass) {
             return res.status(400).json({
                 success: false,
@@ -43,7 +51,7 @@ module.exports = async (req, res) => {
     }
     catch (e) {
         return res.status(500).json({
-            message: `500 error: ${e.message}`,
+            message: `${e.message}`,
             success: false
         })
     }

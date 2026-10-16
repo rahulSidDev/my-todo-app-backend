@@ -31,18 +31,23 @@ module.exports = async (req, res) => {
         }
 
         const user = req.user
-        user.email = newEmail
+        user.email = fetchedOtp.data.newEmail
         await user.save()
 
         return res.status(200).json({
             success: false,
-            message: 'Successfully updated email.'
+            message: 'Successfully updated email.',
+            data: {
+                name: user.name,
+                email: user.email,
+                colorPreference: user.colorPreference
+            }
         })
     }
     catch (e) {
         return res.status(500).json({
             success: false,
-            message: `500 error: ${e.message}`
+            message: `${e.message}`
         })
     }
 }

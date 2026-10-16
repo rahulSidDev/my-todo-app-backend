@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
     catch (e) {
         return res.status(500).json({
             success: false,
-            message: `500 error: ${e.message}`
+            message: `${e.message}`
         })
     }
 }

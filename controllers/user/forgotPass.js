@@ -1,11 +1,10 @@
 const User = require('../../models/user')
 const OTP = require('../../models/otp')
-const bcrypt = require('bcrypt')
 
 module.exports = async (req, res) => {
     try {
-        const {email, newPass, confirmNewPass, otp} = req.body
-        if (!email || !newPass || !confirmNewPass || !otp) {
+        const {email, otp} = req.body
+        if (!email || !otp) {
             return res.status(400).json({
                 success: false,
                 message: 'All fields are required.'
@@ -33,21 +32,22 @@ module.exports = async (req, res) => {
             })
         }
 
-        const fetchedUser = await User.findOne({email})
-        const newPassHash = await bcrypt.hash(newPass, 10)
+        const fetchedUser = await User.findOne({
+            email: fetchedOtp[0].data.email
+        })
         
-        fetchedUser.password = newPassHash
+        fetchedUser.password = fetchedOtp[0].data.newPassHash
         await fetchedUser.save()
 
         return res.status(200).json({
-            message: 'successfully changed password.',
+            message: 'Successfully changed password.',
             success: true
         })
     }
     catch (e) {
         return res.status(500).json({
             success: false,
-            message: `500 error: ${e.message}`
+            message: `${e.message}`
         })
     }
 }
