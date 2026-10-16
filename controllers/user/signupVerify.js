@@ -1,7 +1,9 @@
 const User = require("../../models/user");
 const OTP = require("../../models/otp")
 const mailSender = require('../../utils/mailSender')
+const bcrypt = require('bcrypt')
 const emailTemplates = require('../../utils/emailTemplates')
+const passwordValidator = require('../../utils/passwordValidator')
 
 module.exports = async (req, res) => {
     try {
@@ -23,8 +25,16 @@ module.exports = async (req, res) => {
             });
         }
 
+        const errors = passwordValidator(password)
+        if (errors.length !== 0) {
+            return res.status(400).json({
+                success: false,
+                message: errors
+            })
+        }
+
         //password and confirm password checking
-        if(password !== confirmPass) {
+        if (password !== confirmPass) {
             return res.status(400).json({
                 success: false,
                 message: "Password and confirm password dont match.",
@@ -44,10 +54,12 @@ module.exports = async (req, res) => {
         const otpCreateFunc = () => Math.floor(100000 + Math.random() * 900000);
         const otp = otpCreateFunc();
 
+        const hashedPass = await bcrypt.hash(password, 10);
         const otpRes = await OTP.create({
             email: email, 
             otp: otp,
-            purpose: 'signup'
+            purpose: 'signup',
+            data: {name, email, hashedPass}
         });
 
         const template = emailTemplates.signupOtp(otp);
@@ -66,7 +78,7 @@ module.exports = async (req, res) => {
     catch (e) {
         return res.status(500).json({
             success: false,
-            message: `500 error: ${e.message}`
+            message: `${e.message}`
         })
     }
 }

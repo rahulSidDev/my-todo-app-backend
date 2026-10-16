@@ -2,7 +2,7 @@ const User = require('../../models/user')
 
 module.exports = async (req, res) => {
     try {
-        if (!req.body.name && !req.body.colorPreference) {
+        if (!req.body.name || !req.body.colorPreference) {
             return res.status(400).json({
                 success: false,
                 message: 'Update fields are required.'
@@ -33,7 +33,7 @@ module.exports = async (req, res) => {
     catch (e) {
         return res.status(500).json({
             success: false,
-            message: `500 error: ${e.message}`
+            message: `${e.message}`
         })
     }
 }

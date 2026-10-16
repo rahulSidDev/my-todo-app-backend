@@ -3,13 +3,6 @@ const Note = require("../../models/note");
 module.exports = async (req, res) => {
     try {
         const {title, content} = req.body;
-        if (!title || !content) {
-            return res.status(400).json({
-                message: "All fields are required.",
-                success: false,
-            })
-        }
-        
         const user = req.user
 
         const lastCreatedNote = await Note.findOne({
@@ -37,7 +30,7 @@ module.exports = async (req, res) => {
     }
     catch (error) {
         return res.status(500).json({
-            message: `500 error: ${error.message}`,
+            message: `${error.message}`,
             success: false,
         })
     }

@@ -2,6 +2,7 @@ const OTP = require("../../models/otp")
 const User = require('../../models/user')
 const mailSender = require('../../utils/mailSender')
 const emailTemplates = require('../../utils/emailTemplates')
+const bcrypt = require('bcrypt')
 
 module.exports = async (req, res) => {
     try {
@@ -20,6 +21,14 @@ module.exports = async (req, res) => {
             return res.status(400).json({
                 message: "Invalid email format.",
             });
+        }
+
+        const errors = passwordValidator(password)
+        if (errors.length !== 0) {
+            return res.status(400).json({
+                success: false,
+                message: errors
+            })
         }
 
         if (newPass !== confirmNewPass) {
@@ -41,10 +50,12 @@ module.exports = async (req, res) => {
         const otpCreateFunc = () => Math.floor(100000 + Math.random() * 900000);
         const otp = otpCreateFunc();
 
+        const newPassHash = await bcrypt.hash(newPass, 10)
         const otpRes = await OTP.create({
             email: email, 
             otp: otp,
-            purpose: 'forgot-password'
+            purpose: 'forgot-password',
+            data: {email, newPassHash}
         });
 
         const template = emailTemplates.forgotPasswordOtp(otp);
@@ -56,14 +67,14 @@ module.exports = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: 'successfully sent otp',
+            message: 'Successfully sent otp.',
             expiresAt: new Date(otpRes.createdAt.getTime() + 5 * 60 * 1000)
         })
     }
     catch (e) {
         return res.status(500).json({
             success: false,
-            message: `500 error: ${e.message}`
+            message: `${e.message}`
         })
     }
 }

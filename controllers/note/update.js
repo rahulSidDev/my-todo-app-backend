@@ -3,8 +3,8 @@ const Note = require("../../models/note");
 module.exports = async (req, res) => {
     try {
         const {title, content} = req.body;
-        
-        if (!title || !content) {
+
+        if (title === undefined || content === undefined) {
             res.status(400).json({
                 message: "All fields are required.",
                 success: false,
@@ -22,8 +22,8 @@ module.exports = async (req, res) => {
             })
         }
 
-        fetchedNote.title = title || fetchedNote.title
-        fetchedNote.content = content || fetchedNote.content
+        fetchedNote.title = title
+        fetchedNote.content = content
         const updatedNote = await fetchedNote.save()
 
         res.status(200).json({

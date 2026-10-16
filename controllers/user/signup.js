@@ -1,18 +1,18 @@
 const User = require("../../models/user");
 const OTP = require("../../models/otp")
-const bcrypt = require("bcrypt");
 
 module.exports = async (req, res) => {
     try {
-        const {name, email, password, confirmPass, otp} = req.body;
-        if (!name || !email || !password || !confirmPass || !otp) {
+        const {email, otp} = req.body;
+        if (!email || !otp) {
             return res.status(400).json({
                 success: false,
                 message: "All fields are required.",
             })
         }
 
-        //fetch the most recent otp for the corresponding email from DB and then verify it.
+        // fetch the most recent otp for the corresponding email from 
+        // DB and then verify it.
         const recentOtp = await OTP.find({
             email, 
             purpose: 'signup'
@@ -32,13 +32,10 @@ module.exports = async (req, res) => {
             })
         }
 
-        // create the password hash, make the DB user entry and return success response.
-        const hashedPass = await bcrypt.hash(password, 10);
-
         const userData = await User.create({
-            name: name,
-            email: email,
-            password: hashedPass,
+            name: recentOtp[0].data.name,
+            email: recentOtp[0].data.email,
+            password: recentOtp[0].data.hashedPass,
         })
 
         return res.status(200).json({
@@ -49,7 +46,7 @@ module.exports = async (req, res) => {
     catch (error) {
         return res.status(500).json({
             success: false,
-            message: `500 error: ${error.message}`
+            message: `${error.message}`
         })
     }
 }
