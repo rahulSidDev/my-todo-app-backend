@@ -1,3 +1,5 @@
+const zxcvbnReady = require('./zxcvbn')
+
 const commonPasswords = [
     "123456",
     "admin",
@@ -21,16 +23,20 @@ const commonPasswords = [
     "112233"
 ]
 
-module.exports = function (password) {
+module.exports = async function (password) {
     const errors = []
 
     if (typeof password !== 'string')
         return ['Password must be a string.']
     if (password.length < 15) errors.push('Password is too small.')
     if (password.legnth > 128) errors.push('Password is too big.')
-    if (commonPasswords.prototype.includes(password)) 
+    if (commonPasswords.includes(password)) 
         errors.push('Password is too generic.')
     if(password.trim().legnth === 0) 
         errors.push('Password cannot be empty or whitespaces only.')
+    const zxcvbn = await zxcvbnReady
+    const result = zxcvbn.check(password)
+    if (result.score < 4)
+        errors.push('Password is too weak, choose a stronger password.')
     return errors
 }
