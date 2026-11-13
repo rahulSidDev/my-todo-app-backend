@@ -2,6 +2,7 @@ const OTP = require("../../models/otp")
 const User = require('../../models/user')
 const mailSender = require('../../utils/mailSender')
 const emailTemplates = require('../../utils/emailTemplates')
+const passwordValidator = require('../../utils/passwordValidator')
 const bcrypt = require('bcrypt')
 
 module.exports = async (req, res) => {
@@ -23,18 +24,18 @@ module.exports = async (req, res) => {
             });
         }
 
-        const errors = passwordValidator(password)
-        if (errors.length !== 0) {
-            return res.status(400).json({
-                success: false,
-                message: errors
-            })
-        }
-
         if (newPass !== confirmNewPass) {
             return res.status(400).json({
                 success: false,
                 message: 'New password and confirm new password do not match.'
+            })
+        }
+
+        const errors = await passwordValidator(newPass)
+        if (errors.length !== 0) {
+            return res.status(400).json({
+                success: false,
+                message: errors[0]
             })
         }
 

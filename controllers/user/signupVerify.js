@@ -25,11 +25,11 @@ module.exports = async (req, res) => {
             });
         }
 
-        const errors = passwordValidator(password)
+        const errors = await passwordValidator(password)
         if (errors.length !== 0) {
             return res.status(400).json({
                 success: false,
-                message: errors
+                message: errors[0]
             })
         }
 
